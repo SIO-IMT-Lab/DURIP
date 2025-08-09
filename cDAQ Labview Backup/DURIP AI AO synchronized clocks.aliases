@@ -1,0 +1,9 @@
+[My Computer]
+My Computer = "100.64.8.208"
+
+[NI-cDAQ-9136-01BD035E]
+NI-cDAQ-9136-01BD035E = "172.22.11.2"
+
+[RT PXI Target]
+RT PXI Target = "0.0.0.0"
+

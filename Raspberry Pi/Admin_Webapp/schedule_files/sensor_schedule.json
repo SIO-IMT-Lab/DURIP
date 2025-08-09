@@ -1,0 +1,26 @@
+{
+  "schedules": {
+      "cDAQ": [],
+      "AML": [],
+      "subNero": [],
+      "FSO": [],
+      "TX": [],
+      "UV": []
+  },
+  "overrides": {
+      "cDAQ": null,
+      "AML": null,
+      "subNero": null,
+      "FSO": null,
+      "TX": null,
+      "UV": null
+  },
+  "indices": {
+      "cDAQ": 2,
+      "AML": 0,
+      "subNero": 1,
+      "FSO": 1,
+      "TX": 0,
+      "UV": 0
+  }
+}
