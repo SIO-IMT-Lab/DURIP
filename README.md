@@ -1,47 +1,60 @@
 # IMT Lab: DURIP Project
 
-All the code and documentation for the DURIP Project at the SIO IMT Lab
+All code and documentation for the DURIP Project at the SIO IMT Lab.
+
+## Repository Structure
+
+```text
+.
+├── AML/                   # Serial logger for AML water quality sensor
+├── Ethernet_Relay_Switch/ # TCP utilities and GUI for Ethernet relay
+├── IO_Control/            # ADS1015 & MCP23017 I2C utilities and GUIs
+├── LabVIEW_Source/        # LabVIEW projects and shared VIs for cDAQ
+├── Transmissometer/       # Serial logger for Seabird transmissometer
+└── webapps/               # FastAPI web applications and shared scheduling logic
+```
+
+```mermaid
+graph TD
+    subgraph Sensors
+        AML
+        TX[Transmissometer]
+        cDAQ
+        Subnero
+        FSO
+    end
+    Scheduler[Schedule Manager\n(webapps/shared)]
+    Client[Web Client]
+    Admin[Admin Dashboard]
+    Client -->|HTTP| Scheduler
+    Admin -->|HTTP + Auth| Scheduler
+    Scheduler -->|cron jobs| Sensors
+    Scheduler --> Files[Schedule Files]
+```
 
 ## Web Applications
 
-Two FastAPI-based web applications are available under the `webapps/` directory:
+Two FastAPI-based web applications live under `webapps/`:
 
-- `webapps/client` – user-facing scheduler that leverages shared scheduling services.
-- `webapps/admin` – secured scheduler with HTTP Basic authentication, reusing the same shared services.
+- `webapps/client` – a user-facing scheduler that leverages shared services.
+- `webapps/admin` – a secured dashboard with HTTP Basic authentication.
 
-Shared assets and scheduling logic are located in `webapps/shared`.
+Shared assets and scheduling logic reside in `webapps/shared`.
 
-## Task list
+## Task List
 
-* [DONE] Create a Labview executable that runs on startup
-
-* Automatic upload of Rx files to DURIP computer
-
-* Check contents of binary file. This can be transferred using sftp and Filezilla.
-
-* Install some error checking routines to avoid filling up the disk and transmitting 'improper' waveforms.
-
-* Decide on what acquisition variables are programmable and give the user access to them (sampling rate? gain control?).
- 
-* Implement transmit and receive scheduling protocols from a configuration file.
-
-* Manual override for immediate transmit.
+- [x] Build a LabVIEW executable that runs on startup
+- [x] Implement transmit/receive scheduling from a configuration file
+- [x] Provide manual override for immediate transmit
+- [ ] Automate upload of Rx files to the DURIP computer
+- [ ] Verify contents of transferred binary files
+- [ ] Add error-checking to prevent disk overrun or invalid waveforms
+- [ ] Expose user-programmable acquisition variables (e.g., sampling rate, gain)
 
 ## Notes
 
-Testbed is going to run. There is an instrument schedule that gets executed, which is loaded onto the Durip computer and downloaded onto the underwater testbed and executed. The files from the instruments are uploaded.
-
-The schedule for each instrument depends on the instrument. 
-
-* AML Water Quality Sensor
-* Seabird transmissometer
-
-These instruments give serial data that needs to be logged. The data rate is low. If we run autonomously with batteries, we turn them off. We turn them on at a specified time, and then get the serial data, and then turn them off.
-
-The subnero modems have web servers on them, and we communicate to them via Ethernet. They get turned on, and there are command functions (e.g. transmit and receive data) which are executed at regular intervals. And then the modem gets turned off. This is the same with the FSO. The command functions are currently unknown.
-
-Then there's the cDAQ. It gets turned on, and it transmits files that are specified, and generates files of receieved data, and then it gets turned off.
-
-The nodes are the FSO, cDAQ, subnero, AML, and seabird and these nodes talk to each other. Thus, there needs to be accurate clock calendars and they need to be synchronized.
-
-Let's decide on a scheduling format.
+- The underwater testbed executes schedules loaded from the DURIP computer.
+- Instruments (AML water quality sensor, Seabird transmissometer, subNero modems, FSO, cDAQ) are powered only when needed to conserve energy.
+- Serial devices log low-rate data; Ethernet devices expose web servers for command and control.
+- The cDAQ transmits specified files, logs received data, then powers down.
+- Accurate time synchronization across all nodes is essential for coordinated operation.
