@@ -1,6 +1,15 @@
 # IMT-Lab-Durip
 All the code and documentation for the Durip Project at the SIO IMT Lab
 
+## Web Applications
+
+Two FastAPI-based web applications are available under the `webapps/` directory:
+
+- `webapps/client` – user-facing scheduler that leverages shared scheduling services.
+- `webapps/admin` – secured scheduler with HTTP Basic authentication, reusing the same shared services.
+
+Shared assets and scheduling logic are located in `webapps/shared`.
+
 ## Task list
 
 * [DONE] Create a Labview executable that runs on startup
