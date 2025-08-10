@@ -1,0 +1,18 @@
+gbd 8/13/2021
+
+Some cDAQ files
+C:\Users\IMT Lab\Documents\LabVIEW Data\DURIP TestBench Hello World
+
+DURIP AI AO synchronized clocks.lvproj : no trigger
+NI9775_acquisitiontest.lvproj : no this one.
+NI9262_waveformtest : no.
+
+Labview cDAQ\
+Labview Data\DURIP TestBench Hello World\
+
+Getting Started.lvproj - no.
+DURIP TestBench Hello World.lvproj - no.
+third one from bottom - no.
+fourth one up from bottom - no.
+
+

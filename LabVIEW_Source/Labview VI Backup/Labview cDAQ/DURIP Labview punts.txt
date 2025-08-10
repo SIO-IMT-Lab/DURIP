@@ -1,0 +1,17 @@
+09/10/2021.
+Punts.
+
+1. Convert AI DAQ from floats to int16 to potentially increase number of samples acquirable 
+per run and also decrease stored data file size.
+
+2. Code more flexibility into number of channels configured for Tx/Rx to allow user to increase
+performance. 1, 2, 3, or 4 Tx channels independently of 1, 2, 3, or 4 RX channels.
+
+3. Start TX on a second boundary.
+
+4. Implement command versus transmit mode.
+
+9/17/2021.
+Labview Projects.
+DURIP testing 082321.lvproj : Master code for development, runs hybrid with a PC
+DURIP StandAloneTest 091721 : Project to test LV standalone deployment on cDAQ startup.
