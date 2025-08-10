@@ -9,7 +9,7 @@ logFilePath = 'AML.txt'
 def logData(data):
     with open(logFilePath, 'a') as logFile:
         logFile.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {data.decode('utf-8')}")
-        
+
 def main():
     try:
         # Open the serial port
@@ -24,9 +24,9 @@ def main():
                 print(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {data.decode('utf-8')}")
     except KeyboardInterrupt:
         print("Exiting...")
-    finally: 
+    finally:
         # Close the serial port when done
         ser.close()
-        
+
 if __name__ == "__main__":
     main()
