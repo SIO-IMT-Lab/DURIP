@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import json
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from crontab import CronTab
@@ -10,8 +11,11 @@ from crontab import CronTab
 class ScheduleManager:
     """Manage sensor schedules, overrides and state persistence."""
 
-    def __init__(self, storage_file: str = "sensor_schedule.json") -> None:
-        self.storage_file = storage_file
+    def __init__(self, storage_file: Optional[str] = None) -> None:
+        shared_dir = Path(__file__).resolve().parent.parent
+        self.scripts_dir = shared_dir / "scripts"
+        default_storage = shared_dir / "schedule_files" / "sensor_schedule.json"
+        self.storage_file = Path(storage_file) if storage_file else default_storage
         self.sensors_channels: Dict[str, int] = {
             "cDAQ": 1,
             "AML": 2,
@@ -70,7 +74,10 @@ class ScheduleManager:
     def _add_crontab_job(self, sensor: str, state: str, time: str, tag: str) -> None:
         cron = CronTab(user=True)
         if state == "logging":
-            command = f'echo "Sensor {sensor} is now logging" && python scripts/LogSerialData.py'
+            command = (
+                f'echo "Sensor {sensor} is now logging" '
+                f'&& python {self.scripts_dir / "LogSerialData.py"}'
+            )
         else:
             channel = self.sensors_channels[sensor]
             command = (
@@ -205,7 +212,10 @@ class ScheduleManager:
             for job in cron.find_comment(f"sensor_{sensor}_schedule_"):
                 job.enable(False)
             if state == "logging":
-                command = f'echo "Sensor {sensor} is now logging" && python scripts/LogSerialData.py'
+                command = (
+                    f'echo "Sensor {sensor} is now logging" '
+                    f'&& python {self.scripts_dir / "LogSerialData.py"}'
+                )
             else:
                 channel = self.sensors_channels[sensor]
                 command = (

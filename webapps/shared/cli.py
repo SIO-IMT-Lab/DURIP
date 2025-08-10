@@ -1,9 +1,11 @@
 """Command line interface for managing sensor schedules."""
 
+"""Command line interface for managing sensor schedules."""
+
 import argparse
 from typing import List
 
-from services.schedule_manager import ScheduleManager
+from .services.schedule_manager import ScheduleManager
 
 
 def parse_args() -> argparse.Namespace:
