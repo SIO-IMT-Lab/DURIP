@@ -23,7 +23,7 @@ graph TD
         Subnero
         FSO
     end
-    Scheduler[Schedule Manager (webapps/shared)]
+    Scheduler[Schedule Manager]
     Client[Web Client]
     Admin[Admin Dashboard]
     Client -->|HTTP| Scheduler
