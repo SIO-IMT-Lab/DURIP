@@ -64,7 +64,8 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
         label.grid(row=i, column=0, sticky=tk.W)
         ads_labels.append(label)
 
-    fig = Figure(figsize=(5, 3), dpi=100)
+    fig_width = max(6, 0.6 * len(data))
+    fig = Figure(figsize=(fig_width, 3), dpi=100)
     ax = fig.add_subplot(111)
     bars = ax.bar(range(len(data)), data)
     ax.set_ylim(0, 30)
@@ -72,6 +73,7 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
     ax.set_title("ADS1015 Voltages")
     ax.set_xticks(range(len(data)))
     ax.set_xticklabels([f"Ch {i}" for i in range(len(data))])
+    fig.tight_layout()
     canvas = FigureCanvasTkAgg(fig, master=ads_frame)
     canvas.draw()
     canvas.get_tk_widget().grid(row=0, column=1, rowspan=len(data))
