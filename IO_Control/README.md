@@ -3,6 +3,23 @@
 This folder provides command line utilities and GUIs for interacting with the
 ADS1015 analog-to-digital converters and the MCP23017 GPIO expander over I2C.
 
+## Python Environment
+
+Create the shared repository virtual environment named `imt` before working
+with these utilities:
+
+```bash
+python3 -m venv imt
+```
+
+Activate the environment to install dependencies and run the scripts:
+
+```bash
+source imt/bin/activate  # On macOS/Linux
+# or
+imt\Scripts\activate     # On Windows PowerShell
+```
+
 ## Scripts
 
 - `gui.py` – combined GUI showing live ADS1015 voltages and allowing control of
@@ -17,8 +34,8 @@ intervals through a command line interface using `argparse`.
 
 ## Installation
 
-These utilities rely on the Adafruit CircuitPython libraries. Install the
-required packages with:
+These utilities rely on the Adafruit CircuitPython libraries. With the `imt`
+environment active, install the required packages with:
 
 ```bash
 pip install adafruit-circuitpython-ads1x15 adafruit-circuitpython-mcp230xx matplotlib

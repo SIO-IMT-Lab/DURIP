@@ -41,6 +41,26 @@ Two FastAPI-based web applications live under `webapps/`:
 
 Shared assets and scheduling logic reside in `webapps/shared`.
 
+## Python Environment
+
+Create a dedicated Python virtual environment named `imt` to isolate project
+dependencies:
+
+```bash
+python3 -m venv imt
+```
+
+Activate the environment before installing or running any Python utilities:
+
+```bash
+source imt/bin/activate  # On macOS/Linux
+# or
+imt\Scripts\activate     # On Windows PowerShell
+```
+
+With the environment active, install the required packages for the component
+you are working on using `pip`.
+
 ## Task List
 
 - [x] Build a LabVIEW executable that runs on startup
