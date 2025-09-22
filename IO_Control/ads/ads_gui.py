@@ -71,8 +71,8 @@ def main() -> None:
     parser.add_argument(
         "--addresses",
         nargs="+",
-        default=["0x48", "0x49"],
-        help="I2C addresses of ADS1015 chips (default: 0x48 0x49)",
+        default=["0x48", "0x49", "0x4A", "0x4B"],
+        help="I2C addresses of ADS1015 chips (default: 0x48 0x49 0x4A 0x4B)",
     )
     parser.add_argument(
         "--ratio",

@@ -43,11 +43,11 @@ pip install adafruit-circuitpython-ads1x15 adafruit-circuitpython-mcp230xx matpl
 
 ## Example
 
-Run the combined GUI with custom ADS1015 addresses and a two-second refresh
-interval:
+Run the combined GUI with four ADS1015 converters at their default addresses
+and a two-second refresh interval:
 
 ```bash
-python gui.py --ads-addresses 0x48 0x49 --mcp-address 0x20 --interval 2
+python gui.py --ads-addresses 0x48 0x49 0x4A 0x4B --mcp-address 0x20 --interval 2
 ```
 
 Refer to the README files in `ads/` and `mcp/` for module-specific examples.
