@@ -1,9 +1,12 @@
-import time
 """Combined ADS1015 and MCP23017 GUI with configurable options."""
 
 import argparse
+import csv
 import threading
 import time
+from pathlib import Path
+from typing import Optional
+
 import board
 import busio
 import tkinter as tk
@@ -16,13 +19,63 @@ from adafruit_mcp230xx.mcp23017 import MCP23017
 import digitalio
 
 
+def load_channel_metadata(csv_path: Path) -> tuple[dict[int, str], dict[str, int]]:
+    """Load channel and control pin names from a CSV file."""
+
+    channel_names: dict[int, str] = {}
+    pin_channels: dict[str, int] = {}
+
+    try:
+        with csv_path.open(newline="") as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader, None)  # Skip header
+            for row in reader:
+                if not row or not any(cell.strip() for cell in row):
+                    continue
+
+                name = row[0].strip()
+
+                channel_idx: Optional[int] = None
+                if len(row) > 7:
+                    try:
+                        channel_idx = int(row[7], 0)
+                    except ValueError:
+                        channel_idx = None
+
+                pin_label = ""
+                if len(row) > 8:
+                    pin_label = row[8].strip().upper()
+
+                if channel_idx is not None and 0 <= channel_idx < 64 and name:
+                    channel_names[channel_idx] = name
+
+                if (
+                    channel_idx is not None
+                    and pin_label
+                    and pin_label[0] in {"A", "B"}
+                ):
+                    pin_channels[pin_label] = channel_idx
+
+    except FileNotFoundError:
+        pass
+
+    return channel_names, pin_channels
+
+
 def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: float) -> None:
     """Launch the combined ADS1015/MCP23017 GUI."""
+
+    csv_path = Path(__file__).with_name("data.csv")
+    channel_name_map, pin_channel_map = load_channel_metadata(csv_path)
 
     i2c = busio.I2C(board.SCL, board.SDA)
     ads_devices = [ADS1015(i2c, address=a) for a in ads_addresses]
     ads_channels = [[AnalogIn(dev, ch) for ch in range(4)] for dev in ads_devices]
     data = [0.0] * (4 * len(ads_devices))
+
+    channel_labels = [
+        channel_name_map.get(idx, f"Channel {idx}") for idx in range(len(data))
+    ]
 
     mcp = MCP23017(i2c, address=mcp_address)
     a_pins: list[digitalio.DigitalInOut] = []
@@ -59,8 +112,8 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
     mcp_frame.grid(row=0, column=1)
 
     ads_labels: list[ttk.Label] = []
-    for i in range(len(data)):
-        label = ttk.Label(ads_frame, text=f"Channel {i}: --- V", font=("Arial", 12))
+    for i, channel_name in enumerate(channel_labels):
+        label = ttk.Label(ads_frame, text=f"{channel_name}: --- V", font=("Arial", 12))
         label.grid(row=i, column=0, sticky=tk.W)
         ads_labels.append(label)
 
@@ -72,7 +125,8 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
     ax.set_ylabel("Voltage (V)")
     ax.set_title("ADS1015 Voltages")
     ax.set_xticks(range(len(data)))
-    ax.set_xticklabels([f"Ch {i}" for i in range(len(data))])
+    ax.set_xticklabels(channel_labels)
+    ax.tick_params(axis="x", labelrotation=45)
     fig.tight_layout()
     canvas = FigureCanvasTkAgg(fig, master=ads_frame)
     canvas.draw()
@@ -100,13 +154,14 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
         label_prefix: str,
         pins: list[digitalio.DigitalInOut],
         indicators: list[tk.Label],
+        pin_labels: list[str],
     ) -> None:
         section = ttk.LabelFrame(frame, text=f"{label_prefix} Pins", padding=5)
         section.pack(padx=5, pady=5)
-        for i in range(8):
+        for i, label_text in enumerate(pin_labels):
             row = ttk.Frame(section)
             row.pack(anchor="w")
-            ttk.Label(row, text=f"{label_prefix}{i}", width=4).pack(side="left")
+            ttk.Label(row, text=label_text).pack(side="left")
             ind = tk.Label(row, text=" ", bg="red", width=2, height=1, relief="groove")
             ind.pack(side="left", padx=5)
             indicators.append(ind)
@@ -114,12 +169,24 @@ def run_gui(ads_addresses: list[int], mcp_address: int, ratio: float, interval: 
             ttk.Button(row, text="ON", command=lambda i=i: set_pin(pins, i, True)).pack(side="left")
             ttk.Button(row, text="OFF", command=lambda i=i: set_pin(pins, i, False)).pack(side="left")
 
-    create_pin_controls(mcp_frame, "A", a_pins, a_indicators)
-    create_pin_controls(mcp_frame, "B", b_pins, b_indicators)
+    def build_pin_labels(prefix: str) -> list[str]:
+        labels: list[str] = []
+        for idx in range(8):
+            pin_id = f"{prefix}{idx}"
+            channel_idx = pin_channel_map.get(pin_id.upper())
+            if channel_idx is not None and 0 <= channel_idx < len(channel_labels):
+                channel_name = channel_labels[channel_idx]
+                labels.append(f"{pin_id} - {channel_name}")
+            else:
+                labels.append(pin_id)
+        return labels
+
+    create_pin_controls(mcp_frame, "A", a_pins, a_indicators, build_pin_labels("A"))
+    create_pin_controls(mcp_frame, "B", b_pins, b_indicators, build_pin_labels("B"))
 
     def refresh_gui() -> None:
         for i, label in enumerate(ads_labels):
-            label.config(text=f"Channel {i}: {data[i]:.2f} V")
+            label.config(text=f"{channel_labels[i]}: {data[i]:.2f} V")
             bars[i].set_height(data[i])
         canvas.draw()
         update_indicators()
