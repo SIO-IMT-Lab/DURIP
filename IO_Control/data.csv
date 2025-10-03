@@ -1,0 +1,17 @@
+Name,ADS I2C Address,Channel (0-3),Voltage Low,Voltage High,Default Voltage,Channel,Control Pin
+A-IN,0x48,0,,,,24,0,
+RPi,0x48,1,,,,5,1,
+ETHR,0x48,2,,,,12,2,
+SUBN,0x48,3,,,,24,3,A1
+B-IN,0x49,0,,,,24,4,
+NDAQ,0x49,1,,,,24,5,A2
+TX,0x49,2,,,,24,6,A3
+RX,0x49,3,,,,24,7,A4
+C-IN,0x4A,0,,,,24,8,
+AML,0x4A,1,,,,12,9,A5
+TRSM,0x4A,2,,,,12,10,A6
+FSO,0x4A,3,,,,24,11,A7
+D-IN,0x4B,0,,,,24,12,
+UV,0x4B,1,,,,12,13,B0
+TBD,0x4B,2,,,,,14,
+TBD,0x4B,3,,,,,15,
